@@ -1,0 +1,15 @@
+.idea
+*.pyc
+__pycache__
+nrm_app/.idea
+nrm_app/*.pyc
+nrm_app/__pycache__
+nrm_app/.venv_inz
+nrm_app/.env
+nrm_app/entrypoint.sh
+nrm_app/copy
+nrm_app/.env.test
+nrm_app/logs
+nrm_app/migrations
+nrm_app/my.txt
+nrm_app/bash_scripts
