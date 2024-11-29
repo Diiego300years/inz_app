@@ -13,3 +13,4 @@ nrm_app/logs
 nrm_app/migrations
 nrm_app/my.txt
 nrm_app/bash_scripts
+nrm_app/configuration/smb.conf

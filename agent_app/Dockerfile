@@ -1,12 +1,15 @@
-# Wybór oficjalnego obrazu Redis
-FROM redis:7.0
+# Bazowy obraz Python
+FROM python:3.10-slim
 
-# Skopiowanie niestandardowego pliku konfiguracyjnego Redis (jeśli potrzebny)
-# COPY redis.conf /usr/local/etc/redis/redis.conf
+# Tworzenie katalogu aplikacji
+WORKDIR /app
 
-# Ustawienie domyślnego polecenia uruchamiającego Redis
-# Domyślnie Redis uruchamia się na porcie 6379
-CMD ["redis-server"]
+# Kopiowanie pliku wymagań i instalacja zależności
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Eksponowanie portu Redis
-EXPOSE 6379
+# Kopiowanie aplikacji
+COPY . /app
+
+# Punkt startowy kontenera
+ENTRYPOINT ["python", "./app/main.py"]
