@@ -1,60 +1,18 @@
-import time
-import redis
-import json
 import threading
 from flask import Flask, request, jsonify
-
-from samba_scripts.add_teacher import add_linux_admin
-from samba_scripts.add_user import generate_password, add_linux_user
-from samba_scripts.linux_handle import get_system_usage, get_top_resource_hungry_processes
-from samba_scripts.samba_handle import get_active_samba_users, get_samba_server_usage
-
-# Konfiguracja Redis
-redis_client = redis.StrictRedis(host='nrm_redis', port=6379, db=0)
+from .linux_scripts.users_operations import list_users, list_groups, delete_user_and_folder
+from .prepare_to_send import (publish_samba_users, publish_server_metrics, publish_samba_metrics,
+                             publish_most_used_processes)
+from .samba_scripts.add_teacher import add_linux_admin
+from .samba_scripts.add_user import generate_password, add_linux_user
 
 # Flask app do obsługi API
 app = Flask(__name__)
 
-def publish_samba_users():
-    while True:
-        data = get_active_samba_users()
-        serialized_data = json.dumps(data)
-        redis_client.set('latest_samba_metrics', serialized_data)
-        redis_client.publish('samba_metrics', serialized_data)
-        current_time = time.ctime()
-        print(f"Published Samba Users: {data} at time: {current_time}")
-        time.sleep(13)
 
-def publish_server_metrics():
-    while True:
-        data = get_system_usage()
-        serialized_data = json.dumps(data)
-        redis_client.set('latest_server_metrics', serialized_data)
-        redis_client.publish('server_metrics', serialized_data)
-        current_time = time.ctime()
-        print(f"Published Server Metrics: {data} at time: {current_time}")
-        time.sleep(13)
 
-def publish_samba_metrics():
-    while True:
-        data = get_samba_server_usage()
-        serialized_data = json.dumps(data)
-        redis_client.set('latest_samba_server_metrics', serialized_data)
-        redis_client.publish('samba_server_metrics', serialized_data)
-        current_time = time.ctime()
-        print(f"Published Samba Server Usage: {data} at time: {current_time}")
-        time.sleep(13)
-
-def publish_most_used_processes():
-    while True:
-        data = get_top_resource_hungry_processes()
-        serialized_data = json.dumps(data)
-        redis_client.set('latest_most_used_processes', serialized_data)
-        redis_client.publish('most_used_processes', serialized_data)
-        current_time = time.ctime()
-        print(f"Published Most Used Processes: {data} at time: {current_time}")
-        time.sleep(13)
-
+# DODAJ TUTAJ TOKENIZACJE JAKĄŚ PRZY CURLACH ŻEBY PODAWAĆ
+#DODAJ Z SAMBĄ ABY FOLDERY SIĘ KRYLY HIDDENFOLDERS.
 @app.route('/add_user', methods=['POST'])
 def add_user():
     """API endpoint do dodania użytkownika do systemu i Samby."""
@@ -110,6 +68,65 @@ def add_admin():
 
     except Exception as e:
         return jsonify({"status": "error", "message": f"Wystąpił błąd: {str(e)}"}), 500
+
+
+@app.route('/available_users', methods=['POST'])
+def available_users():
+    """Endpoint wysyłający listę użytkowników Samby oraz grup."""
+    try:
+        users_list = list_users()
+        groups_list = list_groups()
+
+        response = {
+            "status": "success",
+            "users": users_list,
+            "groups": groups_list
+        }
+        print(f"Wysyłam użytkowników i grupy: {response}")
+        return jsonify(response), 200
+
+
+    except Exception as e:
+        print(f"Wystąpił błąd: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/remove_with_folder', methods=['POST'])
+def remove_with_folder():
+    """Endpoint do usuwania użytkownika i jego folderu."""
+    try:
+        data = request.json
+        username = data.get('username')
+
+        if not username:
+            return jsonify({"status": "error", "message": "Brak nazwy użytkownika"}), 400
+
+        # Tutaj wywołaj funkcję usuwającą użytkownika i jego folder, np.:
+        if delete_user_and_folder(username):
+            return jsonify({"status": "success", "message": f"Użytkownik {username} usunięty z folderem"}), 200
+        else:
+            return jsonify({"status": "error", "message": "Niemożliwe do wykonania"}), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/remove_without_folder', methods=['POST'])
+def remove_without_folder():
+    """Endpoint do usuwania użytkownika bez folderu."""
+    try:
+        data = request.json
+        username = data.get('username')
+
+        if not username:
+            return jsonify({"status": "error", "message": "Brak nazwy użytkownika"}), 400
+
+        # Tutaj wywołaj funkcję usuwającą użytkownika bez usuwania folderu, np.:
+        print(f"Usuwam użytkownika {username} bez folderu.")
+        # delete_user(username)
+
+        return jsonify({"status": "success", "message": f"Użytkownik {username} usunięty bez folderu"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 def flask_thread():

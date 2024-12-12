@@ -4,7 +4,7 @@ import random
 import subprocess
 
 def add_linux_admin(username, password):
-    """Dodaje użytkownika do systemu Linux i ustawia hasło."""
+    """Dodaje użytkownika do systemu Linux oraz Samba i ustawia hasło."""
     try:
         # Dodanie użytkownika do systemu
         subprocess.run(['useradd', '-m', '-s', '/bin/bash', username], check=True)
@@ -28,13 +28,13 @@ def add_linux_admin(username, password):
         print(f"Error adding admin: {e}")
 
 
-def add_samba_admin(username, password):
-    """Dodaje użytkownika do Samby."""
-    try:
-        # Dodanie użytkownika do bazy Samby
-        subprocess.run(['sudo', 'smbpasswd', '-a', username], input=f"{password}\n{password}\n".encode(), check=True)
-        print(f"User {username} added to Samba.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error adding Samba user: {e}")
+# def add_samba_admin(username, password):
+#     """Dodaje użytkownika do Samby."""
+#     try:
+#         # Dodanie użytkownika do bazy Samby
+#         subprocess.run(['sudo', 'smbpasswd', '-a', username], input=f"{password}\n{password}\n".encode(), check=True)
+#         print(f"User {username} added to Samba.")
+#     except subprocess.CalledProcessError as e:
+#         print(f"Error adding Samba user: {e}")
 
 
