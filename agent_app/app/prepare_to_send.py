@@ -1,5 +1,5 @@
-from .samba_scripts.linux_handle import get_system_usage, get_top_resource_hungry_processes
-from .samba_scripts.samba_handle import get_active_samba_users, get_samba_server_usage
+from servers_scripts.linux_handle import get_system_usage, get_top_resource_hungry_processes
+from servers_scripts.samba_handle import get_active_samba_users, get_samba_server_usage
 import time
 import redis
 import json

@@ -1,28 +1,37 @@
-import threading
+from multiprocessing import Process
 from flask import Flask, request, jsonify
-from .linux_scripts.users_operations import list_users, list_groups, delete_user_and_folder
-from .prepare_to_send import (publish_samba_users, publish_server_metrics, publish_samba_metrics,
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+from prepare_to_send import (publish_samba_users, publish_server_metrics, publish_samba_metrics,
                              publish_most_used_processes)
-from .samba_scripts.add_teacher import add_linux_admin
-from .samba_scripts.add_user import generate_password, add_linux_user
+from controller.users_operations import list_users, list_groups, delete_user_and_folder, add_user_to_group
+from controller.add_teacher import add_linux_admin
+from controller.add_user import generate_password, add_linux_user
 
 # Flask app do obsługi API
 app = Flask(__name__)
 
+# Konfiguracja JWT
+app.config["JWT_SECRET_KEY"] = "twoj_sekretny_klucz"  # Ustaw tutaj bezpieczny klucz
+jwt = JWTManager(app)
 
+@app.route('/login', methods=['POST'])
+def login():
+    """Endpoint do logowania i generowania tokenu."""
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
 
-# DODAJ TUTAJ TOKENIZACJE JAKĄŚ PRZY CURLACH ŻEBY PODAWAĆ
-#DODAJ Z SAMBĄ ABY FOLDERY SIĘ KRYLY HIDDENFOLDERS.
+    # Walidacja poprawności.
+    if username == "admin" and password == "admin123":
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token), 200
+    else:
+        return jsonify({"msg": "Nieprawidłowe dane logowania"}), 401
+
 @app.route('/add_user', methods=['POST'])
+@jwt_required()
 def add_user():
-    """API endpoint do dodania użytkownika do systemu i Samby."""
-    try:
-        data = request.json
-        print("Otrzymane dane:", data)
-        username = data.get('username')
-        print("Otrzymany username:", username)
-    except Exception as ex:
-        print(ex)
+    """API endpoint for add user to Linux system & Samba."""
     try:
         data = request.json
         username = data.get('username')
@@ -30,38 +39,35 @@ def add_user():
         if not username:
             return jsonify({"status": "error", "message": "Brak nazwy użytkownika"}), 400
 
-        password = generate_password()  # Możesz użyć funkcji do generowania losowego hasła
+        password = generate_password()
 
         if add_linux_user(username, password):
-            print("no działa")
             payload = {"username": username, "password": password}
             return jsonify({"status": "success", "data_to_copy": payload})
 
         else:
             return jsonify({"status": "error", "message": f"Wystąpił błąd: "}), 500
 
-
     except Exception as e:
         return jsonify({"status": "error", "message": f"Wystąpił błąd: {str(e)}"}), 500
 
 
 @app.route('/add_admin', methods=['POST'])
+@jwt_required()
 def add_admin():
     """API endpoint do dodania admina/wykładowcy do systemu i Samby."""
     try:
         data = request.json
         username = data.get('teacher_name')
-        print("UDAŁO SIĘ MAM TO", username)
 
         if not username:
             return jsonify({"status": "error", "message": "Brak nazwy użytkownika"}), 400
 
         # Generowanie hasła dla użytkownika
-        password = generate_password()  # Możesz użyć funkcji do generowania losowego hasła
+        password = generate_password()
 
         if add_linux_admin(username, password):
             payload = {"username": username, "password": password}
-            print("działa też?")
             return jsonify({"status": "success", "data_to_copy": payload})
         else:
             return jsonify({"status": "error", "message": f"Wystąpił błąd: "}), 500
@@ -71,6 +77,7 @@ def add_admin():
 
 
 @app.route('/available_users', methods=['POST'])
+@jwt_required()
 def available_users():
     """Endpoint wysyłający listę użytkowników Samby oraz grup."""
     try:
@@ -82,15 +89,14 @@ def available_users():
             "users": users_list,
             "groups": groups_list
         }
-        print(f"Wysyłam użytkowników i grupy: {response}")
         return jsonify(response), 200
 
-
     except Exception as e:
-        print(f"Wystąpił błąd: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
 @app.route('/remove_with_folder', methods=['POST'])
+@jwt_required()
 def remove_with_folder():
     """Endpoint do usuwania użytkownika i jego folderu."""
     try:
@@ -100,7 +106,6 @@ def remove_with_folder():
         if not username:
             return jsonify({"status": "error", "message": "Brak nazwy użytkownika"}), 400
 
-        # Tutaj wywołaj funkcję usuwającą użytkownika i jego folder, np.:
         if delete_user_and_folder(username):
             return jsonify({"status": "success", "message": f"Użytkownik {username} usunięty z folderem"}), 200
         else:
@@ -110,6 +115,7 @@ def remove_with_folder():
 
 
 @app.route('/remove_without_folder', methods=['POST'])
+@jwt_required()
 def remove_without_folder():
     """Endpoint do usuwania użytkownika bez folderu."""
     try:
@@ -119,38 +125,63 @@ def remove_without_folder():
         if not username:
             return jsonify({"status": "error", "message": "Brak nazwy użytkownika"}), 400
 
-        # Tutaj wywołaj funkcję usuwającą użytkownika bez usuwania folderu, np.:
-        print(f"Usuwam użytkownika {username} bez folderu.")
-        # delete_user(username)
-
         return jsonify({"status": "success", "message": f"Użytkownik {username} usunięty bez folderu"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/add_user_to_group', methods=['POST'])
+@jwt_required()
+def add_user_to_group():
+    """Endpoint do dodawania użytkownika do grupy w systemie."""
+    try:
+
+        data = request.json
+        username = data.get('username')
+        group_name = data.get('group_name')
+        print(f"Received request: username={username}, group_name={group_name}")  # DEBUG
+
+        if not username or not group_name:
+            print('username and group_name are required')
+            return jsonify({"status": "error", "message": "Brak nazwy użytkownika lub grupy"}), 400
+
+        # Wywołaj funkcję add_user_to_group zdefiniowaną wcześniej
+        success = add_user_to_group(username, group_name)
+
+        if success:
+            return jsonify({"status": "success", "message": f"Użytkownik {username} został dodany do grupy {group_name}."}), 200
+        else:
+            return jsonify({"status": "error", "message": f"Nie udało się dodać użytkownika {username} do grupy {group_name}."}), 500
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Wystąpił błąd: {str(e)}"}), 500
 
 
-def flask_thread():
-    """Uruchamia aplikację Flask w osobnym wątku."""
+def flask_process():
+    """Uruchamia aplikację Flask w osobnym procesie."""
     app.run(host='0.0.0.0', port=5005)
 
+
+def start_tasks():
+    """Uruchamia zadania w osobnym procesie."""
+    tasks = [
+        publish_samba_users,
+        publish_server_metrics,
+        publish_samba_metrics,
+        publish_most_used_processes
+    ]
+    for task in tasks:
+        process = Process(target=task)
+        process.start()
+
+
+
 if __name__ == '__main__':
-    # Tworzenie wątków dla każdej funkcji
-    samba_thread = threading.Thread(target=publish_samba_users, daemon=True)
-    server_thread = threading.Thread(target=publish_server_metrics, daemon=True)
-    samba_metrics_thread = threading.Thread(target=publish_samba_metrics, daemon=True)
-    most_used_processes_thread = threading.Thread(target=publish_most_used_processes, daemon=True)
-    flask_api_thread = threading.Thread(target=flask_thread, daemon=True)
+    # Tworzenie procesu Flask
+    flask_proc = Process(target=flask_process)
+    flask_proc.start()  # Flask działa w osobnym procesie
 
-    # Uruchomienie wątków
-    samba_thread.start()
-    server_thread.start()
-    samba_metrics_thread.start()
-    most_used_processes_thread.start()
-    flask_api_thread.start()
+    # Uruchamianie zadań (każde zadanie w swoim procesie)
+    start_tasks()
 
-    # Zapewnienie działania głównego wątku
-    samba_thread.join()
-    server_thread.join()
-    samba_metrics_thread.join()
-    most_used_processes_thread.join()
-    flask_api_thread.join()
+    # Czekanie na zakończenie procesu Flask (jeśli konieczne)
+    flask_proc.join()

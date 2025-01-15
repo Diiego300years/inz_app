@@ -2,12 +2,15 @@ version: "3.9"
 
 services:
   agent:
+    image: agent_image:1.0
     environment:
       - PYTHONUNBUFFERED=1
     build:
       context: .
       dockerfile: Dockerfile
     container_name: agent-container
+    ports:
+      - "5005:5005"
     volumes:
       - .:/app
     networks:

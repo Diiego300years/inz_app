@@ -1,15 +1,22 @@
 # Bazowy obraz Python
 FROM python:3.10-slim
 
+# Instalacja podstawowych pakietów systemowych i ACL
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    acl \
+    dbus \
+    && rm -rf /var/lib/apt/lists/*
+
 # Tworzenie katalogu aplikacji
 WORKDIR /app
 
-# Kopiowanie pliku wymagań i instalacja zależności
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
-
 # Kopiowanie aplikacji
 COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Punkt startowy kontenera
-ENTRYPOINT ["python", "./app/main.py"]
+CMD ["python", "./app/main.py"]

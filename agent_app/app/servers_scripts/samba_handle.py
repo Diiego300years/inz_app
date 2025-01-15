@@ -13,9 +13,6 @@ def get_active_samba_users():
         )
 
         user_group = get_user_group(result_second)
-
-        print("USER GROUP: ", user_group)
-
         result = subprocess.run("smbstatus -b | awk 'NR>1 && !/^-/{print $2, $3, $4}'",
                                 shell=True, capture_output=True, text=True)
 
@@ -26,13 +23,10 @@ def get_active_samba_users():
 
         for i in range(len(swap_group)):
             ans = swap_group[i].split(' ')
-            print('USERRRR GRRRROOOOOOUUUUU----P[PPPPP', user_group[i])
             ans[1] = user_group[i]
             swap_group[i] = ' '.join(ans)
 
-        print(swap_group, 'chyab zadziałało')
         data_to_send = swap_group
-        print("muszę posłać!!!! ", data_to_send)
         return data_to_send
     except Exception as e:
         print(f"Error fetching Samba users: {e}")
