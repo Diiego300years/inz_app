@@ -1,0 +1,12 @@
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-nav > li > a {
+    color: #ffffff;  /* Tekst w kolorze białym */
+}
+
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-nav > li > a:hover {
+    color: #cce5ff;  /* Kolor tekstu po najechaniu, lekki odcień */
+}
+body {
+    background-color: #e6f2ff;
+}

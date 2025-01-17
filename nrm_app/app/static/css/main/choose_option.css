@@ -1,0 +1,9 @@
+
+.border-highlight {
+    border: 8px solid;
+    /*border-color: #337ab7;*/
+    border-color: white;
+    border-radius: 8px;
+    max-height: 60vh;
+}
+

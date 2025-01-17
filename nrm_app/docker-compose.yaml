@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  nrm_app:
+    image: nrm_app_image:1.0
+    build:
+      context: .
+    container_name: nrm_flask_app
+    depends_on:
+      - nrm_db
+    ports:
+      - '5002:5000'
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - nrm_backend
+
+  nrm_redis:
+    image: redis:7.0
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - nrm_backend
+
+  nrm_db:
+    image: postgres:13
+    container_name: nrm_flask_db
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - nrm_db_data:/var/lib/postgresql/data
+    networks:
+      - nrm_backend
+
+volumes:
+  nrm_db_data:
+  nrm_db_test_data:
+
+networks:
+  nrm_backend:

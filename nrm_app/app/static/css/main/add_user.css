@@ -1,0 +1,23 @@
+#submit:hover{
+    box-shadow: 0 8px 16px rgba(0,0,0.2,0.2);
+
+}
+
+#submit{
+    background-color: #337ab7;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 18px;
+}
+
+.control-label{
+    font-size: 28px;
+
+}
+
+.form-control{
+    width: 80%;
+    margin-left: 10%;
+}
