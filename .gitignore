@@ -12,3 +12,5 @@ agent_app/.idea
 agent_app/*.pyc
 agent_app/.venv_agent
 agent_app/server_setup/my.txt
+agent_app/__pycache__
+agent_app/.pytest_cache
