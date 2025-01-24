@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   nrm_app:
     image: nrm_app_image:1.0
@@ -37,10 +36,8 @@ services:
       - nrm_db_data:/var/lib/postgresql/data
     networks:
       - nrm_backend
-
 volumes:
   nrm_db_data:
   nrm_db_test_data:
-
 networks:
   nrm_backend:

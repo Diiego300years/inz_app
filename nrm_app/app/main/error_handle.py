@@ -9,3 +9,8 @@ def page_not_found(e):
 @main.app_errorhandler(500)
 def internal_server_error(e):
     return render_template('errors/500.html'), 500
+
+
+@main.app_errorhandler(400)
+def bad_request(e):
+    return render_template('errors/400.html'), 400

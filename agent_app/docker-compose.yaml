@@ -10,12 +10,16 @@ services:
       dockerfile: Dockerfile
     container_name: agent-container
     ports:
+      - "445:445"
       - "5005:5005"
     volumes:
       - .:/app
-    networks:
-      - nrm_app_nrm_backend
+      - /srv/samba/public:/mnt/c/Users/Diego/PycharmProjects/inz_app/test_samby
+#    networks:
+#      - nrm_app_nrm_backend
+    network_mode: host
 
-networks:
-  nrm_app_nrm_backend:
-    external: true
+
+#networks:
+#  nrm_app_nrm_backend:
+#    external: true

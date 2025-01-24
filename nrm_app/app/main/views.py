@@ -108,35 +108,7 @@ def copy_data():
             print(f"Błąd: {e}")
         abort(404)
 
-# def send_message(data_to_send, key="username"):
-#     """
-#     send message to API and takes back
-#     """
-#     payload = {key: data_to_send}
-#
-#     # Wyślij żądanie POST do agenta
-#     if key == "username":
-#         agent_url = "http://agent-container:5005/add_user"  # Adres API agenta
-#     elif key == "teacher_name":
-#         agent_url = "http://agent-container:5005/add_admin"
-#     else:
-#         abort(404)
-#
-#     response = requests.post(agent_url, json=payload)
-#
-#     # agent check
-#     if response.status_code == 200:
-#         result = response.json()
-#         if result.get("status") == "success":
-#             data_to_copy = result.get("data_to_copy")
-#             flash(f'Użytkownik {data_to_send} został pomyślnie dodany!', 'success')
-#             return data_to_copy
-#         else:
-#             flash(f'Wystąpił błąd: {result.get("message")}', 'danger')
-#     else:
-#         flash(f'Błąd podczas komunikacji z agentem: {response.status_code}', 'danger')
-#         return False
-#
+
 def get_token():
     """
     Uzyskuje token JWT z agenta.
@@ -152,34 +124,34 @@ def get_token():
             return response.json().get("access_token")
         else:
             flash("Nie udało się zalogować do agenta.", "danger")
-            return None
+            return False
     except Exception as e:
         flash(f"Błąd podczas logowania do agenta: {e}", "danger")
-        return None
+        return False
 
 
 def send_message(data_to_send, key="username"):
     """
     Wysyła dane do agenta API i odbiera odpowiedź.
     """
-    token = get_token()  # Pobierz token
+    token = get_token()
     if not token:
-        flash("Your token is invalid.", "danger")
-        abort(404)  # Zwróć błąd, jeśli nie udało się uzyskać tokenu
+        abort(400)
 
     payload = {key: data_to_send}
-    headers = {"Authorization": f"Bearer {token}"}  # Dodaj token do nagłówka
+    headers = {"Authorization": f"Bearer {token}"}
 
-    # Ustal adres endpointu na podstawie typu danych
-    if key == "username":
-        agent_url = "http://agent-container:5005/add_user"
-    elif key == "teacher_name":
-        agent_url = "http://agent-container:5005/add_admin"
-    else:
-        abort(404)
+    agent_endpoints = {
+        "username": "http://agent-container:5005/add_user",
+        "teacher_name": "http://agent-container:5005/add_admin"
+    }
+
+    agent_url = agent_endpoints.get(key)
+
+    if not agent_url:
+        abort(400)
 
     try:
-        # Wyślij żądanie POST do agenta z tokenem
         response = requests.post(agent_url, json=payload, headers=headers)
 
         if response.status_code == 200:
@@ -189,10 +161,8 @@ def send_message(data_to_send, key="username"):
                 flash(f'Użytkownik {data_to_send} został pomyślnie dodany!', 'success')
                 return data_to_copy
             else:
-                flash(f'Wystąpił błąd: {result.get("message")}', 'danger')
+                abort(500)
         else:
-            flash(f'Błąd podczas komunikacji z agentem: {response.status_code}', 'danger')
-    except Exception as e:
-        flash(f'Błąd podczas komunikacji z agentem: {e}', 'danger')
-
-    return False
+            abort(404)
+    except Exception:
+        abort(404)

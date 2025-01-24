@@ -1,8 +1,7 @@
 #!/bin/bash
-# Instalacja samba oraz nano podczas konieczności ręcznej poprawy konfiguracji.
+# Instalacja samba.
 apt update;
 apt install samba -y;
-apt install nano -y;
 
 # Konfiguracja Samba.
 cat /etc/samba/smb.conf
@@ -18,9 +17,6 @@ PRIVATE_DIR="$BASE_DIR/public/private"
 groupadd admins;
 groupadd users;
 
-
-# R rekuencyjne
-# chmod jest zbędny
 mkdir -p $PUBLIC_DIR $ADMINS_DIR $PRIVATE_DIR;
 echo "stworzono foldery"
 
