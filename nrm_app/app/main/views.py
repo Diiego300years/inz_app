@@ -66,6 +66,7 @@ def add_teacher():
 @main.route('/copy_data', methods=['GET', 'POST'])
 @login_required
 def copy_data():
+    # Funkcja która kopiuje dane otrzymane w odpowiedzi API-agenta.
     try:
         user_form = AddUserForm()
         username = user_form.user_login.data
@@ -108,35 +109,6 @@ def copy_data():
             print(f"Błąd: {e}")
         abort(404)
 
-# def send_message(data_to_send, key="username"):
-#     """
-#     send message to API and takes back
-#     """
-#     payload = {key: data_to_send}
-#
-#     # Wyślij żądanie POST do agenta
-#     if key == "username":
-#         agent_url = "http://agent-container:5005/add_user"  # Adres API agenta
-#     elif key == "teacher_name":
-#         agent_url = "http://agent-container:5005/add_admin"
-#     else:
-#         abort(404)
-#
-#     response = requests.post(agent_url, json=payload)
-#
-#     # agent check
-#     if response.status_code == 200:
-#         result = response.json()
-#         if result.get("status") == "success":
-#             data_to_copy = result.get("data_to_copy")
-#             flash(f'Użytkownik {data_to_send} został pomyślnie dodany!', 'success')
-#             return data_to_copy
-#         else:
-#             flash(f'Wystąpił błąd: {result.get("message")}', 'danger')
-#     else:
-#         flash(f'Błąd podczas komunikacji z agentem: {response.status_code}', 'danger')
-#         return False
-#
 def get_token():
     """
     Uzyskuje token JWT z agenta.
