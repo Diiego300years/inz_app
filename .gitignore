@@ -14,3 +14,4 @@ agent_app/.venv_agent
 agent_app/server_setup/my.txt
 agent_app/__pycache__
 agent_app/.pytest_cache
+test_samby
