@@ -1,5 +1,4 @@
 import requests
-
 from .forms import AddUserForm, AddTeacherForm
 from . import main
 from flask import render_template, url_for, redirect, abort, current_app, flash, request
@@ -66,6 +65,7 @@ def add_teacher():
 @main.route('/copy_data', methods=['GET', 'POST'])
 @login_required
 def copy_data():
+    # Funkcja która kopiuje dane otrzymane w odpowiedzi API-agenta.
     try:
         user_form = AddUserForm()
         username = user_form.user_login.data
@@ -107,7 +107,6 @@ def copy_data():
         if current_app.debug:
             print(f"Błąd: {e}")
         abort(404)
-
 
 def get_token():
     """
