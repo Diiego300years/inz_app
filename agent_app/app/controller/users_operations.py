@@ -34,24 +34,23 @@ def delete_user_and_folder(username):
     """
     try:
         # Usuwanie użytkownika i katalogu domowego
-        result = subprocess.run(["userdel", "-r", username], capture_output=True, text=True)
+        ask_for_group = subprocess.run(["id", username], capture_output=True, text=True)
         second_result = subprocess.run(["pdbedit", "-x", username], capture_output=True, text=True)
 
-        ask_for_group = subprocess.run(["groupdel", "-r", username], capture_output=True, text=True)
+        delete_group = subprocess.run(["groupdel", username], capture_output=True, text=True)
         if 'users' in ask_for_group.stdout:
-            third_result = subprocess.run(["rm", "-rf", f"/srv/samba/public/private/{username}"], capture_output=True, text=True)
+            third_result = subprocess.run(["rm", "-rf", f"/srv/samba/public/private/{username}"],
+                                          capture_output=True, text=True)
         else:
-            third_result = subprocess.run(["rm", "-rf", f"/srv/samba/public/admins/{username}"], capture_output=True, text=True)
+            third_result = subprocess.run(["rm", "-rf", f"/srv/samba/public/admins/{username}"],
+                                          capture_output=True, text=True)
 
-
+        result = subprocess.run(["userdel", "-r", username], capture_output=True, text=True)
         if result.returncode == 0 and second_result.returncode == 0 and third_result.returncode == 0:
-            print(f"Użytkownik {username} został pomyślnie usunięty wraz z folderem.")
             return True
         else:
-            print(f"Błąd podczas usuwania użytkownika {username}: {result.stderr}")
             return False
     except Exception as e:
-        print(f"Wystąpił wyjątek podczas usuwania użytkownika {username}: {str(e)}")
         return False
 
 def delete_user_without_folder(username):
@@ -76,7 +75,7 @@ def delete_user_without_folder(username):
         print(f"Wystąpił wyjątek podczas usuwania użytkownika {username}: {str(e)}")
         return False
 
-def add_user_to_group(username, group_name):
+def add_user_to_linux_group(username, group_name):
     """
     Dodaje użytkownika do grupy.
     Args:

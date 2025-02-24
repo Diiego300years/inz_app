@@ -1,4 +1,4 @@
-import { socket } from "./socket_dashboard.js";
+    import { socket } from "./socket_dashboard.js";
 
 socket.on('linux_server_data_table', function (response) {
     console.log('linux_server_data_table działa');
@@ -76,7 +76,7 @@ socket.on('resource_linux_server_data_table', function (response) {
 
         // Dodanie komórki dla Memory Usage
         let memoryCell = document.createElement('td');
-        memoryCell.textContent = `${resourceServerData.memory_usage_gb}` || '';
+        memoryCell.textContent = `${resourceServerData.memory_usage_gb}GB` || '';
         resource_row.appendChild(memoryCell);
 
         // Dodanie wiersza do tabeli

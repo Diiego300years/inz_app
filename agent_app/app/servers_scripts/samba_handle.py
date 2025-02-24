@@ -3,7 +3,7 @@ import psutil
 
 
 def get_active_samba_users():
-    """Catch active samba users """
+    """Pozyskanie aktywnych członków sAMBA """
     try:
         users = []
         swap_group = []

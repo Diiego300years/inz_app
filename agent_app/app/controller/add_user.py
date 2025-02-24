@@ -29,11 +29,9 @@ def add_linux_user(username, password):
         private_path = f"/srv/samba/public/private/{username}"
         os.makedirs(private_path, exist_ok=True)
         subprocess.run(["chown", f"{username}:{username}", private_path], check=True)
-
-        # moje upewnienie się
         subprocess.run(["chmod", "700", private_path], check=True)
 
-        print(f"User {username} added with private folder: {private_path}")
+        print(f"User with username: {username} added with private folder: {private_path}")
         return True
     except subprocess.CalledProcessError as e:
         print(f"Error adding user: {e}")

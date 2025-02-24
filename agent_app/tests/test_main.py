@@ -1,5 +1,5 @@
 import unittest
-from ..main import app  # Import aplikacji Flask
+from agent_app.app.main import app  # Import aplikacji Flask
 
 class TestEndpoints(unittest.TestCase):
     def setUp(self):

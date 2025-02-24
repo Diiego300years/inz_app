@@ -26,11 +26,13 @@ def send_request_to_agent(endpoint, payload):
     """Wysyła żądanie do agenta z tokenem."""
     token = get_token()
     if not token:
-        return None  # Nie można wysłać żądania bez tokenu
+        abort(404)  # Nie można wysłać żądania bez tokenu
 
     headers = {"Authorization": f"Bearer {token}"}
     try:
         response = requests.post(f"{AGENT_URL}/{endpoint}", json=payload, headers=headers)
+        print("działa RESPONSEEE?????, ", response)
+        print(response.json())
         if response.status_code == 200:
             return response.json()
         else:
@@ -87,7 +89,7 @@ def delete_user_with_folder():
         response = send_request_to_agent("remove_with_folder", payload)
 
         if response and response.get("status") == "success":
-            flash(f"Użytkownik {username} został usunięty z folderem: {response.get('message')}", 'success')
+            flash(f"{response.get('message')}", 'success')
         else:
             flash(f"Nie udało się usunąć użytkownika: {response.get('message')}", 'danger')
     else:
@@ -111,7 +113,7 @@ def delete_user_without_folder():
         response = send_request_to_agent("remove_without_folder", payload)
 
         if response and response.get("status") == "success":
-            flash(f"Użytkownik {username} został usunięty bez folderu: {response.get('message')}", 'success')
+            flash(f"{response.get('message')}", 'success')
         else:
             flash(f"Nie udało się usunąć użytkownika: {response.get('message')}", 'danger')
     else:
@@ -123,28 +125,37 @@ def delete_user_without_folder():
 @edit.route('/add_user_to_group', methods=['POST'])
 @login_required
 def add_user_to_group():
+    # form = AddUserToGroupForm()
+    response_data = send_request_to_agent("available_users", {})
+    available_groups = response_data.get("groups", []) if response_data else []
+
+    print("moje gRUPPYYY: ", available_groups)
+
     form = AddUserToGroupForm()
-    print("My FOOOOOOOOORM IS ", form)
+    form.group.choices = [(group, group) for group in available_groups]  # Ustaw `choices` przed walidacją
 
     if form.validate_on_submit():
         print("POWINNO BYYYYYYYYYYC")
         username = form.username.data
         print(username, 'USERNAMEEEEEEEEEEEEEEEEEEEEEEEEE')
         group = form.group.data
+        print(group)
 
         if not username or not group:
             flash('Nie podano nazwy użytkownika lub grupy', 'danger')
             return redirect(url_for('edit.user_edit'))
 
-        print(username, group, "MOJJJJJJEEEEEEEEEEEEEEE")
         payload = {"username": username, "group": group}
         response = send_request_to_agent("add_user_to_group", payload)
 
+        print(payload,response)
         if response and response.get("status") == "success":
             flash(f"Użytkownik {username} został dodany do grupy {group}.", 'success')
         else:
             flash(f"Nie udało się dodać użytkownika do grupy: {response.get('message')}", 'danger')
     else:
+        print("dziwny bład")
+        print(form.errors)
         flash('Nieprawidłowe dane w formularzu', 'danger')
 
     return redirect(url_for('edit.user_edit'))

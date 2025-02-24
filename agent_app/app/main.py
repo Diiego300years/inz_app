@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from prepare_to_send import (publish_samba_users, publish_server_metrics, publish_samba_metrics,
                              publish_most_used_processes)
-from controller.users_operations import list_users, list_groups, delete_user_and_folder, add_user_to_group
+from controller.users_operations import list_users, list_groups, delete_user_and_folder, add_user_to_linux_group
 from controller.add_teacher import add_linux_admin
 from controller.add_user import generate_password, add_linux_user
 
@@ -137,7 +137,7 @@ def add_user_to_group():
 
         data = request.json
         username = data.get('username')
-        group_name = data.get('group_name')
+        group_name = data.get('group')
         print(f"Received request: username={username}, group_name={group_name}")  # DEBUG
 
         if not username or not group_name:
@@ -145,7 +145,7 @@ def add_user_to_group():
             return jsonify({"status": "error", "message": "Brak nazwy użytkownika lub grupy"}), 400
 
         # Wywołaj funkcję add_user_to_group zdefiniowaną wcześniej
-        success = add_user_to_group(username, group_name)
+        success = add_user_to_linux_group(username, group_name)
 
         if success:
             return jsonify({"status": "success", "message": f"Użytkownik {username} został dodany do grupy {group_name}."}), 200

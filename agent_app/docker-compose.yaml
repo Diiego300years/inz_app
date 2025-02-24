@@ -17,7 +17,7 @@ services:
       - "138:138/udp" # NetBIOS Datagram Service (opcjonalne)
     volumes:
       - .:/app
-      - /srv/samba/public:/mnt/c/Users/Diego/PycharmProjects/inz_app/test_samby
+#      - /srv/samba/public:/mnt/c/Users/Diego/PycharmProjects/inz_app/test_samby
     networks:
 #      - samba_test
       - nrm_app_nrm_backend

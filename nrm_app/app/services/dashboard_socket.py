@@ -6,7 +6,7 @@ from app.services.utils import handle_users_data, handle_server_data
 
 class DashboardNamespace(Namespace):
     """
-    My socket for dashboard
+    Mój socket dla dashboard (panel administracyjny)
     """
     PER_PAGE = 2
     last_data = None
@@ -61,9 +61,9 @@ class DashboardNamespace(Namespace):
 
 
     def update_dashboard_data(self, app, socketio):
-        """Start thread to hear Redis."""
+        """Rozpoczęcie wątku nasłuchiwania Redis."""
         def redis_listener():
-            """Check redis than send to websocket."""
+            """Sprawdź redis a nastepnie wyślij jako websocket."""
             with ((app.app_context())):
                 redis_client = app.config['REDIS_CLIENT']
                 while True:
@@ -106,7 +106,7 @@ class DashboardNamespace(Namespace):
                             print(f"Emitowane dane nie działają ", e)
                     except Exception as e:
                         print(f"Błąd podczas sprawdzania Redis: {e}")
-                    # Wait before next iteration
+                    # Poczekaj przed ponowną próbą
                     time.sleep(13)
 
         # start background task
@@ -115,7 +115,7 @@ class DashboardNamespace(Namespace):
 
     def pagination_handle(self, users: list, page: int=1):
         """
-        function for handling pagination while showing available users
+        funkcja do zarządzania paginacją
         """
         per_page = self.PER_PAGE
         total_pages = (len(users) + per_page - 1) // per_page
@@ -166,6 +166,3 @@ class DashboardNamespace(Namespace):
             })
         except Exception as e:
             print("Error in update_users_emit, ", e)
-
-
-

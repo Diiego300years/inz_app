@@ -45,16 +45,19 @@ def get_top_resource_hungry_processes(top_n=5):
                 proc_info['memory_usage_gb'] = round(proc_info['memory_info'].rss / (1024 ** 3), 2)  # Pamięć w GB
                 processes.append(proc_info)
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                # Ignore for processes which can't be used
                 continue
 
-        response = {}
-        for p in processes:
-            response['name'] = p['name']
-            response['cpu_percent'] = p['cpu_percent']
-            response['memory_usage_gb'] = p['memory_usage_gb']
+        # Sortowanie procesów według CPU, potem pamięci
+        processes.sort(key=lambda x: (x['cpu_percent'], x['memory_usage_gb']), reverse=True)
 
-        return response
+        # Pobranie top_n procesów
+        top_processes = processes[:top_n]
+
+        # Wybór najbardziej obciążającego procesu
+        most_hungry = max(top_processes, key=lambda x: (x['cpu_percent'], x['memory_usage_gb']))
+
+        return most_hungry
+
     except Exception as e:
         print(f"Błąd podczas pobierania danych procesów: {e}")
         return {
