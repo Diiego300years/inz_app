@@ -5,7 +5,7 @@ import redis
 import json
 
 # Konfiguracja Redis
-redis_client = redis.StrictRedis(host='nrm_redis', port=6379, db=0)
+redis_client = redis.StrictRedis(host='redis-server', port=6379, db=0)
 
 
 def publish_samba_users():
@@ -14,8 +14,6 @@ def publish_samba_users():
         serialized_data = json.dumps(data)
         redis_client.set('latest_samba_metrics', serialized_data)
         redis_client.publish('samba_metrics', serialized_data)
-        current_time = time.ctime()
-        print(f"Published Samba Users: {data} at time: {current_time}")
         time.sleep(13)
 
 def publish_server_metrics():

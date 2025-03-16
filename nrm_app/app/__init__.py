@@ -45,7 +45,7 @@ def create_app(config_name):
     socketio.init_app(app)
 
     redis_client = redis.StrictRedis(
-        host='nrm_redis',
+        host='redis-server',
         port=6379,
         db=0,
         decode_responses=True

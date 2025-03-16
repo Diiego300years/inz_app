@@ -31,7 +31,7 @@ def login():
 @app.route('/add_user', methods=['POST'])
 @jwt_required()
 def add_user():
-    """API endpoint for add user to Linux system & Samba."""
+    """API endpoint dla dodania usera do Linuxa oraz Samba."""
     try:
         data = request.json
         username = data.get('username')
@@ -174,14 +174,8 @@ def start_tasks():
         process.start()
 
 
-
 if __name__ == '__main__':
-    # Tworzenie procesu Flask
     flask_proc = Process(target=flask_process)
-    flask_proc.start()  # Flask działa w osobnym procesie
-
-    # Uruchamianie zadań (każde zadanie w swoim procesie)
+    flask_proc.start()
     start_tasks()
-
-    # Czekanie na zakończenie procesu Flask (jeśli konieczne)
     flask_proc.join()

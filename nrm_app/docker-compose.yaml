@@ -41,3 +41,4 @@ volumes:
   nrm_db_test_data:
 networks:
   nrm_backend:
+    external: true
