@@ -11,11 +11,34 @@ W celu uruchomienia należy podmienić nazwę .env.sample na .env. Następnie b�
 
 <img width="518" alt="image" src="https://github.com/user-attachments/assets/ddfae63a-a8a4-4029-8602-a537d91d9482" />
 
-Zrzut ekranu strony głównej.
+Zrzut ekranu strony głównej. </br>
 Źródło: opracowanie własne.
 
 
 <img width="440" alt="image" src="https://github.com/user-attachments/assets/66f86d20-80b3-4c54-b93f-26beb71b250d" />
 
-Rys. 18 Zrzut ekranu strony podglądu i edycji użytkownika.
+Zrzut ekranu strony podglądu i edycji użytkownika. </br>
 Źródło: opracowanie własne.
+
+
+
+Kluczowe technologie zastosowane podczas realizacji Server Side Rendering nrm_app:
+- Python,
+- JavaScript, HTML, CSS,
+- Flask,
+- Flask_login,
+- Flask-SQLAlchemy,
+- Flask-SocketIO,
+- Flask-Admin,
+- Flask-Bcrypt,
+- Flask-Bootstrap,
+- Flask-JWT-Extended.
+
+
+Kluczowe technologie zastosowane podczas realizacji API agent_app:
+- redis,
+- psutil,
+- flask,
+- flask_jwt_extended,
+- multiprocess,
+- subprocess.
