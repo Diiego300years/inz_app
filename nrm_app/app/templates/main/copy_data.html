@@ -1,0 +1,41 @@
+{% extends "main/base.html" %}
+
+{% block title %} NRM app{% endblock %}
+
+{% block page_content %}
+<div class="container">
+    <div class="row">
+        <h1 style="margin-top: 10%; margin-bottom: 8%"> Wybierz opcję </h1>
+    </div>
+    <div class="row" style="height: 100vh;">
+        <div class="col-xs-6 col-md-12" style=" display: table; height: 40%">
+            <div class="btn-group-vertical" role="group" aria-label="...">
+                    <a href="#" class="btn btn-primary btn-lg" id="copyButton" style="margin-bottom: 10%" onclick="copyToClipboard()"
+                    data-copy="{{ data_to_copy }}" >Kopiuj dane</a>
+                {% if last_action == 'add_teacher' %}
+                    <a href="{{ url_for('main.add_teacher') }}" class="btn btn-primary btn-lg" id="redirectButton" style="margin-top: 10%">
+                        Dodaj kolejnego wykładowcę
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('main.add_user') }}" class="btn btn-primary btn-lg" id="redirectButton" style="margin-top: 10%">
+                        Dodaj kolejnego użytkownika
+                    </a>
+                {% endif %}
+            <div id="message" style="color: green; font-weight: bold; margin-top: 5%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <script src="{{ url_for('static', filename='js/copy_helper.js') }}" charset="utf-8">
+    </script>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+{% endblock %}

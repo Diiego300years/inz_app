@@ -1,0 +1,161 @@
+{% extends "main/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} NRM- edit user {% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/index.css') }}">
+{% endblock %}
+
+{% block page_content %}
+{#   All tables are in container. A section below. #}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">
+                            Aktywni użytkownicy Samby
+                        </h2>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Nazwa użytkownika</th>
+                                <th>Grupa użytkownika</th>
+                                <th>Adres IP użytkownika</th>
+                            </tr>
+                            </thead>
+                            <tbody id="user-list">
+                            <tr id="no_user">
+                                <td colspan="3">Brak danych o urządzeniu</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <ul class="pagination" id="pagination-controls">
+                            <!-- Tutaj będą dodane elementy paginacji -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+{#    Section b #}
+        <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">
+                            Dane zużycia serwera Samba
+                        </h2>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Procesy</th>
+                                <th>Używane CPU</th>
+                                <th>Używany RAM</th>
+                            </tr>
+                            </thead>
+                            <tbody id="server-samba-data-list">
+                            <tr id="no_server_samba_data">
+                                <td colspan="3">Brak dostępnych danych o serwerze Samba</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <ul class="pagination" id="pagination-controls-samba-server-data">
+                            <!-- Tutaj będą dodane elementy paginacji -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+        <!-- C section -->
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">
+                            Najbardziej zasobożerny proces serwera Linux
+                        </h2>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Nazwa procesu</th>
+                                <th>Używane CPU</th>
+                                <th>Używany RAM</th>
+                            </tr>
+                            </thead>
+{#                            below should be changed#}
+                            <tbody style="text-align: center" id="server-resource-data-list">
+                            <tr id="no_resource_linux_data">
+                                <td colspan="3">Brak danych o urządzeniu</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <ul class="pagination" id="pagination-controls">
+                            <!-- Tutaj będą dodane elementy paginacji -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h2 class="panel-title">
+                        Dane zużycia serwera Linux
+                    </h2>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Używana pamięć dysku</th>
+                            <th>Używane CPU</th>
+                            <th>Używany RAM</th>
+                        </tr>
+                        </thead>
+                        <tbody id="server-data-list">
+                        <tr id="no_server_linux_data">
+                            <td colspan="3">Brak dostępnych danych o serwerze Linux</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <ul class="pagination" id="pagination-controls-server-data">
+                        <!-- Tutaj będą dodane elementy paginacji -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+        integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+        crossorigin="anonymous"></script>
+
+        <script src="{{ url_for('static', filename='js/socket_dashboard.js') }}" type="module" charset="utf-8">
+        </script>
+        <script src="{{ url_for('static', filename='js/socket_dashboard_linux_data.js') }}" type="module" charset="utf-8">
+        </script>
+        <script src="{{ url_for('static', filename='js/socket_dashboard_samba_server.js') }}" type="module" charset="utf-8">
+        </script>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+{% endblock %}

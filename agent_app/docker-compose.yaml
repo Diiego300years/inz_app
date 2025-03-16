@@ -1,0 +1,28 @@
+services:
+  agent:
+    image: agent_image:1.0
+    environment:
+      - PYTHONUNBUFFERED=1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent-container
+    ports:
+      - "1445:445"
+      - "5005:5005"
+      - "139:139"
+      - "137:137/udp" # NetBIOS Name Service (opcjonalne)
+      - "138:138/udp" # NetBIOS Datagram Service (opcjonalne)
+    volumes:
+      - .:/app
+#      - /srv/samba/public:/mnt/c/Users/Diego/PycharmProjects/inz_app/test_samby
+    networks:
+#      - samba_test
+      - nrm_app_nrm_backend
+
+
+networks:
+#  samba_test:
+#    driver: bridge
+  nrm_app_nrm_backend:
+    external: true

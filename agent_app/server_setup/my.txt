@@ -1,0 +1,13 @@
+from app.models.admin import AdminModel
+
+new_admin = AdminModel(
+    name="Marcin Buczak",
+    email="marcin.buczakk@gmail.com",
+    password="adminadmin",
+    confirmed=True,
+    is_account_active=True
+)
+
+# Dodanie użytkownika do sesji
+db.session.add(new_admin)
+db.session.commit()

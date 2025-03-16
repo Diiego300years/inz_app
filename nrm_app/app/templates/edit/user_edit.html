@@ -1,0 +1,58 @@
+{% extends "main/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Zarządzanie użytkownikami {% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit/user_edit.css') }}">
+
+{% endblock %}
+
+{% block page_content %}
+<div class="container border-highlight">
+    <div class="row">
+        <h1 class="text-center">Zarządzanie użytkownikami</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nazwa użytkownika</th>
+                        <th>Dostępne opcje do wykonania</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form_data in user_forms %}
+                    <tr class="user_name_style_now">
+                        <td class="user_name_style">{{ form_data.user.name }}</td>
+                        <td class="action-buttons">
+                            <!-- Usuń użytkownika z folderem -->
+                             <form action="{{ url_for('edit.delete_user_with_folder') }}" method="POST" style="display:inline;">
+                                    {{ form_data.delete_with_folder_form.hidden_tag() }}
+                                {{ form_data.delete_with_folder_form.submit(class_="btn btn-danger btn-lg btn-option") }}
+                           </form>
+
+                            <!-- Usuń użytkownika bez folderu -->
+                            <form action="{{ url_for('edit.delete_user_without_folder') }}" method="POST" style="display:inline;">
+                                {{ form_data.delete_without_folder_form.hidden_tag() }}
+                                {{ form_data.delete_without_folder_form.submit(class_="btn btn-warning btn-lg btn-option") }}
+                            </form>
+
+                            <!-- Dodaj do grupy -->
+                            <form action="{{ url_for('edit.add_user_to_group') }}" method="POST" style="display:inline;">
+                                {{ form_data.add_to_group_form.hidden_tag() }}
+                                {{ form_data.add_to_group_form.submit(class_="btn btn-success btn-lg btn-option") }}
+                                {{ form_data.add_to_group_form.group(class="btn-group-add") }}
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
