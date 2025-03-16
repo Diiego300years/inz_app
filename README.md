@@ -10,5 +10,12 @@ W celu uruchomienia należy podmienić nazwę .env.sample na .env. Następnie b�
 
 
 <img width="518" alt="image" src="https://github.com/user-attachments/assets/ddfae63a-a8a4-4029-8602-a537d91d9482" />
+
 Zrzut ekranu strony głównej.
+Źródło: opracowanie własne.
+
+
+<img width="440" alt="image" src="https://github.com/user-attachments/assets/66f86d20-80b3-4c54-b93f-26beb71b250d" />
+
+Rys. 18 Zrzut ekranu strony podglądu i edycji użytkownika.
 Źródło: opracowanie własne.
