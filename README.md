@@ -21,7 +21,6 @@ Zrzut ekranu strony podglądu i edycji użytkownika. </br>
 Źródło: opracowanie własne.
 
 
-
 Kluczowe technologie zastosowane podczas realizacji Server Side Rendering nrm_app:
 - Python,
 - JavaScript, HTML, CSS,
@@ -42,3 +41,11 @@ Kluczowe technologie zastosowane podczas realizacji API agent_app:
 - flask_jwt_extended,
 - multiprocess,
 - subprocess.
+
+Umiejętności, które musiałem posiadać:
+- Docker, docker-compose,
+- działanie na Linux ubuntu (komendy bash),
+- działanie poprzez SSH (po wdrożeniu, drobne zmiany na serverze produkcyjnym),
+- pyCharm - łączy się z powyższym. Deployment -> tam ustawiłem sobie server i jakie foldery mapować,
+- działanie z Samba - zapoznałem się z smbclient w celu lepszych testów manualnych,
+- pisanie skryptów bashowych -> entrypoint.sh, na końcu należy dodać exec "$@" aby nie blokować terminala. Serio to ważne :D 
